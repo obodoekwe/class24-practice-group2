@@ -1,37 +1,22 @@
-# Docker Compose Lab — Flask + PostgreSQL
+# Docker Compose Lab — Flask + PostgreSQL (Animated + Live Logs)
 
-This lab spins up **two containers**:
+Two containers:
+- **web** (Flask) — form + table + animated connectivity + **live logs viewer**
+- **db** (PostgreSQL)
 
-- **web**: a Flask app with a form and a table of results
-- **db**: a PostgreSQL database
-
-The page includes a **visual connectivity map** showing `web ↔ db` status.
-
-## Prerequisites
-
-- Docker and Docker Compose
-
-## Run
-
+### Run
 ```bash
 docker compose up --build
 ```
+Open http://localhost:8080.
 
-Then open **http://localhost:8080**.
+### Live Logs
+The web app mounts the host Docker socket **read-only** and uses Server-Sent Events (SSE) to stream logs from `lab_web` and `lab_db`.
+Buttons allow pause/resume and clearing the panes. Limit: 500 lines per pane.
 
-## What to Try
+> Note: mounting `/var/run/docker.sock` exposes Docker engine access to the `web` container. Keep this to **demo/dev** environments.
 
-1. Submit a record using the form (name, email, message).
-2. Watch the table update.
-3. See the connectivity chip and the diagram (green = connected).
-
-## Tear Down
-
+### Clean up
 ```bash
 docker compose down -v
 ```
-
-## Notes
-
-- Database credentials are in `docker-compose.yml` for demo simplicity.
-- The `web` app auto-creates the `submissions` table if it doesn't exist.
