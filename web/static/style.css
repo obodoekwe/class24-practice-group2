@@ -1,0 +1,33 @@
+:root {
+  --web: #2563eb;
+  --db: #16a34a;
+  --ok: #22c55e;
+  --bad: #ef4444;
+  --ink: #0f172a;
+}
+
+body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+
+.diagram svg { height: 220px; }
+
+.node { fill: white; stroke: #e5e7eb; stroke-width: 2; filter: drop-shadow(0 4px 12px rgba(0,0,0,.08)); }
+.node.web { stroke: var(--web); }
+.node.db { stroke: var(--db); }
+
+.node-label { fill: var(--ink); font-weight: 700; font-size: 14px; }
+
+.link { stroke-width: 6; }
+.link.ok { stroke: var(--ok); }
+.link.bad { stroke: var(--bad); stroke-dasharray: 10 8; }
+
+.warn { fill: var(--bad); font-size: 12px; font-weight: 600; }
+
+.pulse {
+  fill: var(--ok);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse {
+  0% { r: 6; opacity: 1; }
+  50% { r: 10; opacity: .3; }
+  100% { r: 6; opacity: 1; }
+}

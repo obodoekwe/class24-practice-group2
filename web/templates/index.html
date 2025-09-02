@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row g-4">
+  <div class="col-12">
+    <div class="card border-0 shadow">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <h2 class="h4 mb-1 fw-bold">Container Connectivity Map</h2>
+            <p class="text-secondary mb-0">A visual showing the <span class="fw-semibold">web</span> and <span class="fw-semibold">db</span> containers and their link.</p>
+          </div>
+          <span class="badge rounded-pill px-3 py-2 {{ 'bg-success' if connected else 'bg-danger' }}">
+            {{ 'DB Connected' if connected else 'DB Disconnected' }}
+          </span>
+        </div>
+
+        <div class="diagram mt-4">
+          <svg viewBox="0 0 600 200" class="w-100">
+            <!-- Web node -->
+            <g>
+              <rect x="40" y="60" rx="16" ry="16" width="160" height="80" class="node web"/>
+              <text x="120" y="105" text-anchor="middle" class="node-label">web (Flask)</text>
+            </g>
+
+            <!-- DB node -->
+            <g>
+              <rect x="400" y="60" rx="16" ry="16" width="160" height="80" class="node db"/>
+              <text x="480" y="105" text-anchor="middle" class="node-label">db (PostgreSQL)</text>
+            </g>
+
+            <!-- Link -->
+            {% if connected %}
+              <line x1="200" y1="100" x2="400" y2="100" class="link ok"/>
+              <circle cx="200" cy="100" r="6" class="pulse"/>
+            {% else %}
+              <line x1="200" y1="100" x2="400" y2="100" class="link bad"/>
+              <text x="300" y="90" text-anchor="middle" class="warn">no connection</text>
+            {% endif %}
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-6">
+    <div class="card border-0 shadow h-100">
+      <div class="card-body p-4">
+        <h3 class="h5 fw-bold mb-3">Submit a Record</h3>
+        <form method="POST" action="/" class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Full name</label>
+            <input name="full_name" class="form-control" placeholder="Ada Lovelace" required>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" placeholder="ada@example.com" required>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Message</label>
+            <textarea name="message" rows="3" class="form-control" placeholder="A short note for the class..."></textarea>
+          </div>
+          <div class="col-12 d-flex gap-2">
+            <button class="btn btn-primary">Save</button>
+            <a href="/" class="btn btn-outline-secondary">Reset</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-6">
+    <div class="card border-0 shadow h-100">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h3 class="h5 fw-bold mb-0">Submissions</h3>
+          <span class="text-muted small">latest first</span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in rows %}
+              <tr>
+                <td>{{ r.id }}</td>
+                <td class="fw-semibold">{{ r.full_name }}</td>
+                <td><a href="mailto:{{ r.email }}">{{ r.email }}</a></td>
+                <td class="text-secondary">{{ r.message or '' }}</td>
+                <td class="text-nowrap">{{ r.created_at.strftime('%Y-%m-%d %H:%M') if r.created_at else '' }}</td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="5" class="text-center text-muted py-4">No entries yet. Add one on the left.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
