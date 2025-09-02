@@ -3,40 +3,67 @@
 
 <div class="row g-4">
   <div class="col-12">
-    <div class="card border-0 shadow">
+    <div class="card border-0 shadow rise glassy">
       <div class="card-body p-4">
         <div class="d-flex align-items-center justify-content-between">
-          <div>
-            <h2 class="h4 mb-1 fw-bold">Container Connectivity Map</h2>
-            <p class="text-secondary mb-0">A visual showing the <span class="fw-semibold">web</span> and <span class="fw-semibold">db</span> containers and their link.</p>
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-diagram-3 text-primary fs-4"></i>
+            <div>
+              <h2 class="h4 mb-1 fw-bold">Container Connectivity Map</h2>
+              <p class="text-secondary mb-0">A visual showing the <span class="fw-semibold">web</span> and <span class="fw-semibold">db</span> containers and their link.</p>
+            </div>
           </div>
-          <span class="badge rounded-pill px-3 py-2 {{ 'bg-success' if connected else 'bg-danger' }}">
+          <span id="conn-badge" class="badge rounded-pill px-3 py-2 {{ 'bg-success' if connected else 'bg-danger' }}">
             {{ 'DB Connected' if connected else 'DB Disconnected' }}
           </span>
         </div>
 
         <div class="diagram mt-4">
-          <svg viewBox="0 0 600 200" class="w-100">
+          <svg viewBox="0 0 640 220" class="w-100">
+            <defs>
+              <linearGradient id="grad-web" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#60a5fa"/>
+                <stop offset="100%" stop-color="#1d4ed8"/>
+              </linearGradient>
+              <linearGradient id="grad-db" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#34d399"/>
+                <stop offset="100%" stop-color="#059669"/>
+              </linearGradient>
+              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+
             <!-- Web node -->
-            <g>
-              <rect x="40" y="60" rx="16" ry="16" width="160" height="80" class="node web"/>
-              <text x="120" y="105" text-anchor="middle" class="node-label">web (Flask)</text>
+            <g class="floaty">
+              <rect x="40" y="70" rx="18" ry="18" width="200" height="90" class="node web" />
+              <text x="140" y="108" text-anchor="middle" class="node-label">web (Flask)</text>
+              <g transform="translate(70,96)">
+                <text class="icon" text-anchor="middle">🌐</text>
+              </g>
             </g>
 
             <!-- DB node -->
-            <g>
-              <rect x="400" y="60" rx="16" ry="16" width="160" height="80" class="node db"/>
-              <text x="480" y="105" text-anchor="middle" class="node-label">db (PostgreSQL)</text>
+            <g class="floaty" style="animation-delay: .3s;">
+              <rect x="400" y="70" rx="18" ry="18" width="200" height="90" class="node db" />
+              <text x="500" y="108" text-anchor="middle" class="node-label">db (PostgreSQL)</text>
+              <g transform="translate(530,96)">
+                <text class="icon" text-anchor="middle">🗄️</text>
+              </g>
             </g>
 
             <!-- Link -->
-            {% if connected %}
-              <line x1="200" y1="100" x2="400" y2="100" class="link ok"/>
-              <circle cx="200" cy="100" r="6" class="pulse"/>
-            {% else %}
-              <line x1="200" y1="100" x2="400" y2="100" class="link bad"/>
-              <text x="300" y="90" text-anchor="middle" class="warn">no connection</text>
-            {% endif %}
+            <line id="conn-link" x1="240" y1="115" x2="400" y2="115" class="link {{ 'ok' if connected else 'bad' }}" filter="url(#glow)"/>
+            <text id="conn-warn" x="320" y="100" text-anchor="middle" class="warn {{ '' if not connected else 'd-none' }}">no connection</text>
+
+            <!-- Moving packets -->
+            <circle class="packet {{ 'run' if connected else '' }}" cx="240" cy="115" r="6"/>
+            <circle class="packet {{ 'run' if connected else '' }}" cx="240" cy="115" r="4" style="animation-delay: .6s"/>
+            <circle class="packet {{ 'run' if connected else '' }}" cx="240" cy="115" r="5" style="animation-delay: 1.2s"/>
           </svg>
         </div>
       </div>
@@ -44,25 +71,31 @@
   </div>
 
   <div class="col-12 col-lg-6">
-    <div class="card border-0 shadow h-100">
+    <div class="card border-0 shadow rise glassy h-100">
       <div class="card-body p-4">
-        <h3 class="h5 fw-bold mb-3">Submit a Record</h3>
+        <h3 class="h5 fw-bold mb-3 d-flex align-items-center gap-2">
+          <i class="bi bi-ui-checks-grid text-primary"></i> Submit a Record
+        </h3>
         <form method="POST" action="/" class="row g-3">
           <div class="col-12">
             <label class="form-label">Full name</label>
-            <input name="full_name" class="form-control" placeholder="Ada Lovelace" required>
+            <input name="full_name" class="form-control form-control-lg" placeholder="Ada Lovelace" required>
           </div>
           <div class="col-12">
             <label class="form-label">Email</label>
-            <input type="email" name="email" class="form-control" placeholder="ada@example.com" required>
+            <input type="email" name="email" class="form-control form-control-lg" placeholder="ada@example.com" required>
           </div>
           <div class="col-12">
             <label class="form-label">Message</label>
             <textarea name="message" rows="3" class="form-control" placeholder="A short note for the class..."></textarea>
           </div>
           <div class="col-12 d-flex gap-2">
-            <button class="btn btn-primary">Save</button>
-            <a href="/" class="btn btn-outline-secondary">Reset</a>
+            <button class="btn btn-gradient btn-lg">
+              <i class="bi bi-send"></i> Save
+            </button>
+            <a href="/" class="btn btn-outline-secondary btn-lg">
+              <i class="bi bi-arrow-counterclockwise"></i> Reset
+            </a>
           </div>
         </form>
       </div>
@@ -70,15 +103,17 @@
   </div>
 
   <div class="col-12 col-lg-6">
-    <div class="card border-0 shadow h-100">
+    <div class="card border-0 shadow rise glassy h-100">
       <div class="card-body p-4">
         <div class="d-flex align-items-center justify-content-between mb-3">
-          <h3 class="h5 fw-bold mb-0">Submissions</h3>
+          <h3 class="h5 fw-bold mb-0 d-flex align-items-center gap-2">
+            <i class="bi bi-table text-success"></i> Submissions
+          </h3>
           <span class="text-muted small">latest first</span>
         </div>
         <div class="table-responsive">
           <table class="table table-hover align-middle">
-            <thead class="table-light">
+            <thead class="table-light sticky-top">
               <tr>
                 <th>#</th>
                 <th>Name</th>
@@ -89,7 +124,7 @@
             </thead>
             <tbody>
               {% for r in rows %}
-              <tr>
+              <tr class="fade-in">
                 <td>{{ r.id }}</td>
                 <td class="fw-semibold">{{ r.full_name }}</td>
                 <td><a href="mailto:{{ r.email }}">{{ r.email }}</a></td>
@@ -107,6 +142,89 @@
       </div>
     </div>
   </div>
+
+  <!-- Live logs -->
+  <div class="col-12">
+    <div class="card border-0 shadow rise glassy">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-terminal-split text-dark"></i>
+          <h3 class="h5 fw-bold mb-0">Live Container Logs</h3>
+          <span class="text-muted small">(SSE via Docker API)</span>
+        </div>
+        <div class="row g-3">
+          <div class="col-12 col-lg-6">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="badge bg-primary-subtle text-primary-emphasis px-2 py-1">
+                <i class="bi bi-cloud"></i> lab_web
+              </span>
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" onclick="clearLog('log-web')"><i class="bi bi-trash"></i> Clear</button>
+                <button class="btn btn-outline-secondary" data-toggle="pause" data-target="web" onclick="togglePause('web')"><i class="bi bi-pause"></i> Pause</button>
+              </div>
+            </div>
+            <pre id="log-web" class="logpane"></pre>
+          </div>
+          <div class="col-12 col-lg-6">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="badge bg-success-subtle text-success-emphasis px-2 py-1">
+                <i class="bi bi-database"></i> lab_db
+              </span>
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" onclick="clearLog('log-db')"><i class="bi bi-trash"></i> Clear</button>
+                <button class="btn btn-outline-secondary" data-toggle="pause" data-target="db" onclick="togglePause('db')"><i class="bi bi-pause"></i> Pause</button>
+              </div>
+            </div>
+            <pre id="log-db" class="logpane"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<script>
+  const sources = {};
+  const paused = { web: false, db: false };
+  const maxLines = 500;
+
+  function attachSSE(name, elId) {
+    if (sources[name]) { try { sources[name].close(); } catch(e) {} }
+    const es = new EventSource(`/sse/logs/lab_${name}`);
+    es.onmessage = (e) => {
+      if (paused[name]) return;
+      const el = document.getElementById(elId);
+      const line = e.data;
+      const lines = el.textContent ? el.textContent.split('\n') : [];
+      if (lines.length > maxLines) {
+        el.textContent = lines.slice(lines.length - maxLines).join('\n');
+      }
+      el.textContent += (el.textContent ? '\n' : '') + line;
+      el.scrollTop = el.scrollHeight;
+    };
+    es.onerror = () => { /* auto-reconnect */ };
+    sources[name] = es;
+  }
+
+  function clearLog(id) {
+    const el = document.getElementById(id);
+    el.textContent = '';
+  }
+
+  function togglePause(name) {
+    paused[name] = !paused[name];
+    const btns = document.querySelectorAll(`[data-target="${name}"]`);
+    btns.forEach(b => {
+      b.innerHTML = paused[name]
+        ? '<i class="bi bi-play"></i> Resume'
+        : '<i class="bi bi-pause"></i> Pause';
+    });
+  }
+
+  window.addEventListener('load', () => {
+    attachSSE('web', 'log-web');
+    attachSSE('db', 'log-db');
+  });
+</script>
 
 {% endblock %}
