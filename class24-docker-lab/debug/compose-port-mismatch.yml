@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  web:
+    image: docker.io/library/nginx:alpine   # ← replace with your pushed image (e.g. docker.io/USER/simple-web:v1)
+    environment:
+      - PORT=5000
+      - WHO=Compose Student
+    ports:
+      - "8080:5001"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:5000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
